@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Målerinfo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            background-image: url('../static/image.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            filter: blur(5px);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+
+
+        h1 {
+            margin-bottom: 24px;
+            text-align: center;
+            color: #333;
+        }
+
+        form, #output {
+            background-color: #fff;
+            padding: 24px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 16px;
+        }
+
+        button:hover {
+            background-color: #444;
+        }
+
+        #output {
+            margin-top: 32px;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                flex-direction: row;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1 style="color: white">Målerinfo</h1>
+        <form id="phone-form">
+            <label for="phone_number">Telefonnummer:</label>
+            <input type="text" id="phone_number" name="phone_number">
+            <button type="submit">Start</button>
+        </form>
+    </div>
+    <div id="output">
+        <label for="first_name">Fornavn:</label>
+        <input type="text" id="first_name" name="first_name" readonly><br>
+        <label for="last_name">Etternavn:</label>
+        <input type="text" id="last_name" name="last_name" readonly><br>
+        <label for="address">Adresse:</label>
+        <input type="text" id="address" name="address" readonly><br>
+        <label for="phone">Telefonnummer:</label>
+        <input type="text" id="phone" name="phone" readonly><br>
+        <label for="identification">Måler ID:</label>
+        <input type="text" id="identification" name="identification" readonly><br>
+        <label for="meter_identification">Måler Nummer:</label>
+        <input type="text" id="meter_identification" name="meter_identification" readonly>
+        <label for="forbruk">Forbruk:</label>
+        <input type="text" id="forbruk" name="forbruk" readonly>
+
+    </div>
+
+    <script>
+        $("#phone-form").on("submit", function(event) {
+            event.preventDefault();
+
+            $.ajax({
+                url: "/get_info",
+                method: "POST",
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.error) {
+                        alert(response.error);
+                    } else {
+                        $("#first_name").val(response.first_name);
+                        $("#last_name").val(response.last_name);
+                        $("#address").val(response.address);
+                        $("#phone").val(response.phone);
+                        $("#identification").val(response.identification);
+                        $("#meter_identification").val(response.meter_identification);
+                        $("#forbruk").val(response.forbruk + ' kWh'); // Add 'kWh' to the Forbruk value
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
